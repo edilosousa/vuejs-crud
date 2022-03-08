@@ -49,8 +49,12 @@
       </div>
       <div class="card-footer">
         <button class="btn btn-success" @click="savePacientes">Salvar</button>
-        <div class="alert alert-primary " 
-          v-bind:class="{ 'd-none': isActive }" role="alert">
+        <div class="alert float-right" 
+          v-bind:class="{ 
+            'd-none': isActive,
+            'alert-primary': isSuccess,
+            'alert-danger': isDanger 
+          }" role="alert">
           {{ message }}
         </div>
       </div>
@@ -69,8 +73,9 @@ export default {
         plano: "",
       },
       message: "",
-      submitted: false,
       isActive: true,
+      isSuccess: false,
+      isDanger: false
     };
   },
   methods: {
@@ -83,12 +88,24 @@ export default {
       UserDataService.create(dados)
         .then((response) => {
           console.log(response.data.message);
-          this.submitted = true;
           this.isActive = false,
+          this.isSuccess = true,
+          this.isDanger = false,
           this.message = "The paciente create successfully!";
+          setTimeout(()=>{
+            this.isActive = true
+            this.isSuccess = false
+          },2000)
         })
-        .catch((e) => {
-          console.log("aqui"+e);
+        .catch(() => {
+          this.isActive = false,
+          this.isDanger = true,
+          this.isSuccess = false,
+          this.message = "Campos obrigatórios a serem preenchidos!";
+          setTimeout(()=>{
+            this.isActive = true
+            this.isDanger = false
+          },2000)
         });
     },
   },
